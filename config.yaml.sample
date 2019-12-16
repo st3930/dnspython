@@ -1,0 +1,20 @@
+list: sample.txt        # required fqdnlist files path
+max: 100                # default => 100 fqdn max search number of record
+qtype:                  # default => 'A' querytype add list.
+  - A
+#  - AAAA
+resolv:                 # default is
+  - host: 8.8.8.8       # requied query target full-resolv
+    addressfamily: 2    # default => '2' choise { ipv4:2, ipv6:10 }
+    port: 53            # default => '53', integer
+    protocol: udp       # default => 'udp' choise | udp, tcp }
+    timeout: 0          # default => 0(disabled) set is (N>0)sec, inteeger
+    ends: False         # default => Flase, boolean
+    dnssec: False       # default => Flase, boolean
+sleep:
+  interval: 100         # default => sleep disable, sleep interval count of record 1/N is sleep
+  time: 1               # default => sleep disable, sleep duration time
+output:
+#  index: test          # default => '%Y%m%d-%H%M%S'
+  path: './tmp/'        # required, if output is enable
+#verbose: True          # default => Flase , boolean
