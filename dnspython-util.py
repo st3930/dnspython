@@ -30,7 +30,7 @@ def main():
     parser.add_argument("-6", "--ipv6", action='store_const', const=10, help=u"default is ipv6, IPversion 6")
     parser.add_argument("-p", "--port", type=int, help=u"default is 53")
     parser.add_argument("-P", "--protocol", choices=['udp','tcp'], help=u"default is udp")
-    parser.add_argument("-T", "--timeout", type=float, help=u"set Nsec, default is None")
+    parser.add_argument("-T", "--timeout", type=int, help=u"set Nsec, default is None")
     parser.add_argument("-l", "--list", type=str, help=u"fqdn list simple txt file. default is ./sample.txt")
     parser.add_argument("--qtype", "--qtype", type=str, nargs="*", help=u"--qtype A AAAA ..andmore default is A")
     parser.add_argument("--edns", action='store_true', help=u"--edns default is no ENDS")
@@ -337,37 +337,39 @@ def def_dns_query(fqdnlist, resolv, qtype, sleep):
     s_interval = sleep['interval']
     s_time = sleep['time']
     i = 1
-    try:
-        for f in fqdnlist:
-            rr = {}
-            for t in qtype:
-                if s_time != 0:
-                    if i % s_interval == 0:
-                        time.sleep(s_time)
-                q = dns.message.make_query(f, t, use_edns=q_edns, want_dnssec=q_dnssec)
-                if q_protocol == 'udp' :
-                    query = dns.query.udp
-                elif q_protocol == 'tcp':
-                    query = dns.query.tcp
+    for f in fqdnlist:
+        rr = {}
+        for t in qtype:
+            if s_time != 0:
+                if i % s_interval == 0:
+                    time.sleep(s_time)
+            q = dns.message.make_query(f, t, use_edns=q_edns, want_dnssec=q_dnssec)
+            if q_protocol == 'udp' :
+                query = dns.query.udp
+            elif q_protocol == 'tcp':
+                query = dns.query.tcp
+            try:
                 r = query(q, q_ip, timeout=q_timeout, port=q_port, af=q_af)
+                #print r
+                rcode = dns.rcode.to_text(r.rcode())
                 answer = []
                 if not len(r.answer) is 0:
                     for a in str(r.answer[0]).split('\n'):
                         answer.append(a.split()[-1])
                         answer.sort()
-                data = {
-                    t:{
-                        'ANSWER':answer,
-                        'rcode': dns.rcode.to_text(r.rcode())
-                    }
+            except:
+                answer = "timeout"
+                rcode = "timeout"
+
+            data = {
+                t:{
+                    'ANSWER':answer,
+                    'rcode': rcode
                 }
-                rr.update(data)
+            }
+            rr.update(data)
 
-            res.update({f:rr})
-
-    except:
-        print "Error... dns query abort"
-        sys.exit(1)
+        res.update({f:rr})
 
     return res
 
@@ -395,4 +397,5 @@ main()
 
 """ changelog
 2019-12-06 init by st3930
+2020-01-28 bugfix resolver timeout by st3930
 """
