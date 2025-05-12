@@ -1,4 +1,4 @@
-## Intoroduction
+## Introduction
 I wanted checked query answer for many FQDN and DNS Resolver.
 query response data is output by json. and this tools do 'diff' at this data.
 
@@ -11,19 +11,33 @@ tmall.com
 qq.com
 ```
 ## Required
+For Python 2.7 (original version):
 ```
 $ sudo yum install python-dns
 $ sudo pip install jsondiff
 $ sudo pip install ipaddress
 ```
 
+For Python 3.7 (migrated version):
+```
+$ sudo pip3 install dnspython
+$ sudo pip3 install jsondiff
+$ sudo pip3 install ipaddress
+```
+
 ## Confirmed version
-CentOS7.6
-Python2.7
+Original: CentOS7.6, Python2.7
+Migrated: Python3.7
 
 ## Command
+For Python 2.7:
 ```
 $ python dnspython-util.py [options]
+```
+
+For Python 3.7:
+```
+$ python3 dnspython-util-py3.py [options]
 ```
 
 ### args option single resolv only
